@@ -68,7 +68,7 @@ public class BST<E extends Comparable<E>> extends AbstractTree<E> {
         return x;
     }
 
-    private TreeNode<E> successor(@NotNull TreeNode<E> x) {
+    TreeNode<E> successor(@NotNull TreeNode<E> x) {
         if (x.right != null)
             return treeMinimum(x.right);
         TreeNode<E> y = x.parent;
@@ -79,7 +79,7 @@ public class BST<E extends Comparable<E>> extends AbstractTree<E> {
         return y;
     }
 
-    private TreeNode<E> predecessor(@NotNull TreeNode<E> x) {
+    TreeNode<E> predecessor(@NotNull TreeNode<E> x) {
         if (x.left != null)
             return treeMinimum(x.left);
         TreeNode<E> y = x.parent;
