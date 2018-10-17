@@ -1,6 +1,8 @@
+import org.jetbrains.annotations.NotNull;
+
 public class TestBSTDelete {
     public static void main(String[] args) {
-        BST<String> tree = new BST<String>();
+        BST<String> tree = new BST<>();
         tree.insert("George");
         tree.insert("Michael");
         tree.insert("Tom");
@@ -23,14 +25,14 @@ public class TestBSTDelete {
         printTree(tree);
     }
 
-    private static void printTree(BST tree) {
+    private static void printTree(@NotNull BST tree) {
         // Traverse tree
         System.out.print("Inorder (sorted): ");
-        tree.inorder();
+        tree.inOrderTreeWalk();
         System.out.print("\nPostorder: ");
-        tree.postorder();
+        tree.postOrderTreeWalk();
         System.out.print("\nPreorder: ");
-        tree.preorder();
+        tree.preOrderTreeWalk();
         System.out.print("\nThe number of nodes is " + tree.getSize());
         System.out.println();
     }

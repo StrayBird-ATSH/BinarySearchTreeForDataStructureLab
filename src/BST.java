@@ -1,11 +1,12 @@
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 
 public class BST<E extends Comparable<E>> extends AbstractTree<E> {
-    TreeNode<E> root;
-    int size = 0;
+    private TreeNode<E> root;
+    private int size = 0;
 
     /**
      * Create a default binary tree
@@ -21,23 +22,68 @@ public class BST<E extends Comparable<E>> extends AbstractTree<E> {
             insert(element);
     }
 
-
     /**
-     * Returns true if the element is in the tree
+     * Returns the element if the element is in the tree
      */
     @Override
-    public boolean search(E e) {
-        TreeNode<E> current = root; // Start from the root
+    public TreeNode<E> searchIterative(TreeNode<E> x, E k) {
+        TreeNode<E> current = x; // Start from the root
 
-        while (current != null) {
-            if (e.compareTo(current.element) < 0) {
+        while (current != null)
+            if (k.compareTo(current.element) < 0)
                 current = current.left;
-            } else if (e.compareTo(current.element) > 0) {
+            else if (k.compareTo(current.element) > 0)
                 current = current.right;
-            } else // element matches current.element
-                return true; // Element is found
+            else // element matches current.element
+                return current; // Element is found
+        return null;
+    }
+
+
+    @Override
+    public TreeNode<E> searchRecursive(TreeNode<E> x, E k) {
+        if (x == null || k.compareTo(x.element) == 0)
+            return x;
+        if (k.compareTo(x.element) < 0)
+            return searchRecursive(x.left, k);
+        else
+            return searchRecursive(x.right, k);
+    }
+
+    @Contract(pure = true)
+    private TreeNode<E> treeMinimum(@NotNull TreeNode<E> x) {
+        while (x.left != null)
+            x = x.left;
+        return x;
+    }
+
+    @Contract(pure = true)
+    private TreeNode<E> treeMaximum(@NotNull TreeNode<E> x) {
+        while (x.right != null)
+            x = x.right;
+        return x;
+    }
+
+    private TreeNode<E> successor(@NotNull TreeNode<E> x) {
+        if (x.right != null)
+            return treeMinimum(x.right);
+        TreeNode<E> y = x.parent;
+        while (y != null && x.element.equals(y.right.element)) {
+            x = y;
+            y = y.parent;
         }
-        return false;
+        return y;
+    }
+
+    private TreeNode<E> predecessor(@NotNull TreeNode<E> x) {
+        if (x.left != null)
+            return treeMinimum(x.left);
+        TreeNode<E> y = x.parent;
+        while (y != null && x.element.equals(y.left.element)) {
+            x = y;
+            y = y.parent;
+        }
+        return y;
     }
 
 
@@ -47,9 +93,10 @@ public class BST<E extends Comparable<E>> extends AbstractTree<E> {
      */
     @Override
     public boolean insert(E e) {
-        if (root == null)
+        if (root == null) {
             root = createNewNode(e); // Create a new root
-        else {
+            root.parent = null;
+        } else {
             // Locate the parent node
             TreeNode<E> parent = null;
             TreeNode<E> current = root;
@@ -64,18 +111,22 @@ public class BST<E extends Comparable<E>> extends AbstractTree<E> {
                     return false; // Duplicate node not inserted
 
             // Create the new node and attach it to the parent node
-            if (e.compareTo(parent.element) < 0)
+            if (e.compareTo(parent.element) < 0) {
                 parent.left = createNewNode(e);
-            else
+                parent.left.parent = parent;
+            } else {
                 parent.right = createNewNode(e);
+                parent.right.parent = parent;
+            }
         }
-
         size++;
         return true; // Element inserted successfully
     }
 
-    TreeNode<E> createNewNode(E e) {
-        return new TreeNode<E>(e);
+    @NotNull
+    @Contract("_ -> new")
+    private TreeNode<E> createNewNode(E e) {
+        return new TreeNode<>(e);
     }
 
 
@@ -83,7 +134,7 @@ public class BST<E extends Comparable<E>> extends AbstractTree<E> {
      * Inorder traversal from the root
      */
     @Override
-    public void inorder() {
+    public void inOrderTreeWalk() {
         inorder(root);
     }
 
@@ -102,7 +153,7 @@ public class BST<E extends Comparable<E>> extends AbstractTree<E> {
      * Postorder traversal from the root
      */
     @Override
-    public void postorder() {
+    public void postOrderTreeWalk() {
         postorder(root);
     }
 
@@ -121,7 +172,7 @@ public class BST<E extends Comparable<E>> extends AbstractTree<E> {
      * Preorder traversal from the root
      */
     @Override
-    public void preorder() {
+    public void preOrderTreeWalk() {
         preorder(root);
     }
 
@@ -133,20 +184,6 @@ public class BST<E extends Comparable<E>> extends AbstractTree<E> {
         System.out.print(root.element + " ");
         preorder(root.left);
         preorder(root.right);
-    }
-
-    /**
-     * This inner class is static, because it does not access
-     * any instance members defined in its outer class
-     */
-    static class TreeNode<E extends Comparable<E>> {
-        E element;
-        TreeNode<E> left;
-        TreeNode<E> right;
-
-        TreeNode(E e) {
-            element = e;
-        }
     }
 
 
@@ -161,7 +198,7 @@ public class BST<E extends Comparable<E>> extends AbstractTree<E> {
     /**
      * Returns the root of the tree
      */
-    public TreeNode<E> getRoot() {
+    TreeNode<E> getRoot() {
         return root;
     }
 
@@ -169,7 +206,7 @@ public class BST<E extends Comparable<E>> extends AbstractTree<E> {
      * Returns a path from the root leading to the specified element
      */
     ArrayList<TreeNode<E>> path(E e) {
-        ArrayList<TreeNode<E>> list = new ArrayList<TreeNode<E>>();
+        ArrayList<TreeNode<E>> list = new ArrayList<>();
         TreeNode<E> current = root; // Start from the root
 
         while (current != null) {
@@ -250,7 +287,7 @@ public class BST<E extends Comparable<E>> extends AbstractTree<E> {
 
 
     /**
-     * Obtain an iterator. Use inorder.
+     * Obtain an iterator. Use inOrderTreeWalk.
      */
     @Override
     public @NotNull
@@ -261,7 +298,7 @@ public class BST<E extends Comparable<E>> extends AbstractTree<E> {
     // Inner class InorderIterator
     private class InorderIterator implements Iterator<E> {
         // Store the elements in a list
-        private ArrayList<E> list = new ArrayList<E>();
+        private ArrayList<E> list = new ArrayList<>();
         private int current = 0; // Point to the current element in list
 
         InorderIterator() {

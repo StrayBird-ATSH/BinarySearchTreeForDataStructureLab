@@ -1,27 +1,61 @@
-public interface Tree<E> extends Iterable<E> {
-  /** Return true if the element is in the tree */
-  public boolean search(E e);
+public interface Tree<E extends Comparable<E>> extends Iterable<E> {
+    /**
+     * Return true if the element is in the tree
+     */
+    TreeNode<E> searchIterative(TreeNode<E> x, E k);
 
-  /** Insert element o into the binary tree
-   * Return true if the element is inserted successfully */
-  public boolean insert(E e);
 
-  /** Delete the specified element from the tree
-   * Return true if the element is deleted successfully */
-  public boolean delete(E e);
+    TreeNode<E> searchRecursive(TreeNode<E> x, E k);
 
-  /** Inorder traversal from the root*/
-  public void inorder();
+    /**
+     * Insert element o into the binary tree
+     * Return true if the element is inserted successfully
+     */
+    boolean insert(E e);
 
-  /** Postorder traversal from the root */
-  public void postorder();
+    /**
+     * Delete the specified element from the tree
+     * Return true if the element is deleted successfully
+     */
+    boolean delete(E e);
 
-  /** Preorder traversal from the root */
-  public void preorder();
+    /**
+     * Inorder traversal from the root
+     */
+    void inOrderTreeWalk();
 
-  /** Get the number of nodes in the tree */
-  public int getSize();
+    /**
+     * Postorder traversal from the root
+     */
+    void postOrderTreeWalk();
 
-  /** Return true if the tree is empty */
-  public boolean isEmpty();
+    /**
+     * Preorder traversal from the root
+     */
+    void preOrderTreeWalk();
+
+    /**
+     * Get the number of nodes in the tree
+     */
+    int getSize();
+
+    /**
+     * Return true if the tree is empty
+     */
+    boolean isEmpty();
+
+    /**
+     * This inner class is static, because it does not access
+     * any instance members defined in its outer class
+     */
+    class TreeNode<E extends Comparable<E>> {
+        E element;
+        TreeNode<E> left;
+        TreeNode<E> right;
+        TreeNode<E> parent;
+
+        TreeNode(E e) {
+            element = e;
+        }
+    }
 }
