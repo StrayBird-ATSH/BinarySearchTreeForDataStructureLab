@@ -4,6 +4,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+/**
+ * @param <E> a comparable generic that you want this tree to contain
+ * @author Wang, Chen
+ */
 public class BST<E extends Comparable<E>> extends AbstractTree<E> {
     private TreeNode<E> root;
     private int size = 0;
@@ -129,7 +133,6 @@ public class BST<E extends Comparable<E>> extends AbstractTree<E> {
         return new TreeNode<>(e);
     }
 
-
     /**
      * Inorder traversal from the root
      */
@@ -253,10 +256,13 @@ public class BST<E extends Comparable<E>> extends AbstractTree<E> {
             if (parent == null) {
                 root = current.right;
             } else {
-                if (e.compareTo(parent.element) < 0)
+                if (e.compareTo(parent.element) < 0) {
                     parent.left = current.right;
-                else
+                    current.right.parent = parent;
+                } else {
                     parent.right = current.right;
+                    current.right.parent = parent;
+                }
             }
         } else {
             // Case 2: The current node has a left child
@@ -274,11 +280,14 @@ public class BST<E extends Comparable<E>> extends AbstractTree<E> {
             current.element = rightMost.element;
 
             // Eliminate rightmost node
-            if (parentOfRightMost.right == rightMost)
+            if (parentOfRightMost.right == rightMost) {
                 parentOfRightMost.right = rightMost.left;
-            else
+                rightMost.left.parent = parentOfRightMost;
+            } else {
                 // Special case: parentOfRightMost == current
                 parentOfRightMost.left = rightMost.left;
+                rightMost.left.parent = parentOfRightMost;
+            }
         }
 
         size--;
